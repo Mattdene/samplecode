@@ -1,0 +1,50 @@
+import boto3
+import os
+
+def get_all_iam_users():
+    """Retrieve all IAM users from the account"""
+    iam = boto3.client('iam')
+    users = []
+    
+    try:
+        paginator = iam.get_paginator('list_users')
+        for page in paginator.paginate():
+            for user in page['Users']:
+                users.append(user['UserName'])
+        return users
+    except Exception as e:
+        print(f"Error retrieving IAM users: {str(e)}")
+        return []
+
+def subscribe_users_to_amazon_q(users):
+    """Subscribe users to Amazon Q"""
+    q_client = boto3.client('q')
+    
+    try:
+        for username in users:
+            try:
+                # Note: The actual API call would depend on the specific Amazon Q API
+                # This is a placeholder for illustration
+                response = q_client.subscribe_user(
+                    UserName=username,
+                    SubscriptionType='Pro'  # Assuming Pro subscription
+                )
+                print(f"Successfully subscribed user {username} to Amazon Q")
+            except Exception as e:
+                print(f"Failed to subscribe user {username}: {str(e)}")
+    except Exception as e:
+        print(f"Error in subscription process: {str(e)}")
+
+def main():
+    # Get all IAM users
+    users = get_all_iam_users()
+    
+    if not users:
+        print("No IAM users found in the account")
+        return
+    
+    # Subscribe users to Amazon Q
+    subscribe_users_to_amazon_q(users)
+
+if __name__ == "__main__":
+    main()
