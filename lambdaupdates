@@ -1,0 +1,21 @@
+import boto3
+
+def update_lambda_function():
+    lambda_client = boto3.client('lambda')
+    
+    response = lambda_client.update_function_code(
+        FunctionName='your-function-name',
+        ZipFile=b'your-deployment-package',  # Your new code
+        Publish=False  # Set to True if you want to publish a new version
+    )
+    
+    # Optionally update configuration
+    response = lambda_client.update_function_configuration(
+        FunctionName='your-function-name',
+        Runtime='python3.11',  # Example runtime update
+        Environment={
+            'Variables': {
+                'NEW_ENV_VAR': 'value'
+            }
+        }
+    )
